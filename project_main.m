@@ -23,30 +23,42 @@ while 1 > 0
     if (length(button_press) > f)
     fprintf('%d',button_press(end))
     f = f + 1;
+    pause(1)
     end
     
     
-    if (button_readings == 10)&(active==-1)
+    if (button_readings == 33)&(active==-1)
      pwd = button_press(1:end-1);
      button_press = [];
      fprintf('\nPlease enter the password\n')
      active = 1;
      f = 0;
-    elseif (button_readings ==10)&(active==1)
-        if (pwd == button_press(1:end-1))&(length(pwd) == length(button_press))
+    elseif (button_readings ==33)&(active==1)
+        if (length(pwd) == length(button_press(1:end-1)))
+            if(pwd == button_press(1:end-1))
             fprintf('Thank you, please enjoy your day\n')
             active = 0;
+%%%%%%%This deactivates the alarm and sends you to the main menu, also
+%%%%%%%controlled by the button mechanism
+            end
+        elseif (((button_readings ==33))&(length(button_press(1:end-1)) == 3))
+            if (button_press(1:end-1) == [3 3 3])
+                error('Leaving function')
+%%%%%%%This is code I used to reset the function without leaving my
+%%%%%%%counters improperly reset. This way I don't have to physically set
+%%%%%%%the counters
+            end
         else
             active = active + 1;
             button_press = [];
              fprintf('\n Incorrect, please enter the correct password\n')
+             f = 0;
             if active == 4
                alarm();
                active = 1;
             end
         end
-    elseif ((button_readings ==10))&(button_press(1:end-1) == 333)
-    error('Leaving function') 
+   
     end
         if active > 1
         [Error  IR_sensor] = ljud_eGet (ljHandle, LJ_ioGET_DIGITAL_BIT, 7, 1, 0);

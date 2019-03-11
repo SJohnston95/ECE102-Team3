@@ -23,15 +23,22 @@ h = 1;
 k = 1;
 l = 1;
 output = [];
-numbers = [2 1 1 3 2;5 33 4 6 0;9 9 9 9 9;8 0 7 0 0];
-
+%numbers = [2 1 1 3 2;5 33 4 6 0;9 9 9 9 9;8 0 7 0 0];
+%%%%At higher frequencies this image changes. I'm not sure why. this works
+%%%%at 60hz and below
+%numbers = [1 2 3 4 5; 6 7 8 9 10; 11 12 13 14 15; 16 17 18 19 20]
+%%%%The above vector is what I use to plot out the image
+numbers = [0 1 3 5 0; 33 4 6 0 0; 0 0 9 8 0; 0 7 0 2 0];
+%%%%This works at above 60hz. I tested it at 600hz and 6khz. It appears
+%%%%that this is the legitimate mapping. The previous one must have been
+%%%%reliant on some weird behavior of the counters at low frequencies
 while   i <= 32
-pause(.001);
+pause(.0005);
  [Error buttonreadings] = ljud_eGet(ljHandle, LJ_ioGET_AIN, 1, 0, 0);
 Error_Message(Error);
 Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,0,1, 1);
 Error_Message(Error);
-pause(.001)
+pause(.0005)
 Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,0,0, 1);
 Error_Message(Error);
 
@@ -51,11 +58,9 @@ Error_Message(Error);
     k = 1;
     end      
     if buttonreadings > 2.0
-    pause(.9)
-    output(l) = numbers(k,h);
-    k;
-    h;
-     l = l + 1;
+
+    output = numbers(k,h);
+ 
     end
     h = h + 1;
     i = i + 1;
