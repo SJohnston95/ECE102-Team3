@@ -66,7 +66,7 @@ while 1 > 0
             fprintf('\n Incorrect, please enter the correct password\n')
             f = 0;
             button_press = [];
-            end
+           
             
 %%%%%%This prints out an incorrect password sequence and gives the user 3
 %%%%%%chances to type the correct password before the alarm is activated
