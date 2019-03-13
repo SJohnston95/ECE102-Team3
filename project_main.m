@@ -15,7 +15,8 @@ l = 1;
 f = 0;
 active = -1;
 active2 = 1
-patching = 0;
+reset = 0;
+
 fprintf('Welcome to your home security system\n Please enter a password: ')
 %%%%%%This while loop calls the button detection function and determines
 %%%%%%the behavior of the outputs
@@ -31,11 +32,13 @@ while 1 > 0
         if button_readings == 33
         fprintf('#')
         pause(.5)
-         f = f + 1;
-        else          
-        fprintf('%d',button_press(end))
-         f = f + 1;
+        f = f + 1;
+        else
+         pause(.001)
+%%%%I'm adding this in to provoke the fprintf function. I'm not sure why, but fprintf is not printing the very first entry
+         fprintf('%d',button_press(end))
          pause(.5)
+         f = f + 1;
         end
     end
 %%%%%%This determines if a button was pressed and then prints it only once    
@@ -86,8 +89,9 @@ while 1 > 0
 %%%%%%%access. This is allows one to reach the control panel
         if (active == 0)
         
-         if printing == 1
-            
+         if printing == 1 
+            clc
+            %%%Clear the entered password
             fprintf('\nControl Panel\n')
             fprintf('Note that changing any settings in the Control Panel will require the user to re-enter their password\n')
             fprintf('Please enter one of they keyed inputs\n')
@@ -95,11 +99,10 @@ while 1 > 0
             fprintf('2 for activating the inside alarm system\n')
             fprintf('3 for activating the outside light system\n')
             fprintf('Press 0 to change password\n')
-            fprintf('Press # to deactivate alarm\n')
+            fprintf('Press # to deactivate alarm \n')
             button_readings = [];
             button_press = [];
-            printing = 0; 
-   
+            printing = 0;    
             pause(3)
          end
             if (button_readings == 1)
@@ -107,29 +110,39 @@ while 1 > 0
             both_sensor =2;
             button_press = [];
             button_readings = [];
-            patching = 0;
-            fprintf('\nPlease enter the password\n')
+            fprintf('\nPlease enter the password to return to control panel\n')
+            f = 0;
             elseif (button_readings == 2)
             active = 1;
             both_sensor =1;
             button_press = [];
             button_readings = [];
-            patching = 0;
-            fprintf('\nPlease enter the password\n')
+            f = 0;
+            fprintf('\nPlease enter the password to return to control panel\n')
             elseif (button_readings == 3)
             active = 1;
             both_sensor =0;  
             button_press = [];
             button_readings = [];
-            patching = 0;
-            fprintf('\nPlease enter the password\n')   
-            elseif (button_readings == 0)
+            f = 0;
+            fprintf('\nPlease enter the password to return to control panel\n')   
+            elseif (button_readings == 0)&(reset==0)
+            reset = 1;
             active = 1;
             both_sensor = 3;
             button_press = [];
             button_readings = [];
-            patching = 0;
-            fprintf('\n After entering your previous password, please enter the new password\n')    
+            f = 0;
+            fprintf('\n Please enter your previous password\n') 
+            pause(.5)
+            elseif reset ==1
+            active = -1;
+            reset = 0;
+            fprintf('\n Please enter your new password\n')
+            pause(.5) 
+            button_press = [];
+            button_readings = [];
+            f = 0;
             elseif (button_readings == 33)
             error('Deactivating alarm')
             end
@@ -141,12 +154,13 @@ while 1 > 0
  
 %%%%%%If the alarm is active, then the sensors will be triggered, each by a certain sensor mode
 
-        if (active > 1)&(both_sensor == 2)
+        if (active == 1)&(both_sensor == 2)
         [Error  IR_sensor] = ljud_eGet (ljHandle, LJ_ioGET_DIGITAL_BIT, 7, 1, 0);
         Error_Message(Error)
         [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_DIGITAL_BIT, 6, 1, 0);
         Error_Message(Error)
                 if (IR_sensor > 0)
+                    fprintf('Alarm\n')
                     alarm();     
                 end
                 if (IR_OUTSIDE > 0)
@@ -156,6 +170,7 @@ while 1 > 0
                    l = l - 1;
                 elseif (IR_OUTSIDE < 0)& (1 <=0)
                     lights(0);
+                    fprintf('Lights on\n')
                 end
                 i = 1;
         elseif (active > 1)&(both_sensor == 1)
