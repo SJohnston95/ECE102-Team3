@@ -9,6 +9,9 @@ ljud_Constants
 [Error ljHandle] = ljud_OpenLabJack(LJ_dtU3,LJ_ctUSB,'1',1);
 Error_Message(Error)
 Error = ljud_ePut(ljHandle, LJ_ioPIN_CONFIGURATION_RESET, 0, 0, 0);
+[Error  rValue] = ljud_eGet (ljHandle, LJ_ioPUT_ANALOG_ENABLE_BIT, 1, 1, 0);
+button_press = [];
+[Error  rValue] = ljud_eGet (ljHandle, LJ_ioPUT_ANALOG_ENABLE_BIT, 6, 1, 0);
 button_press = [];
 i = 1;
 l = 1;
@@ -156,39 +159,39 @@ while 1 > 0
 
         if (active == 1)&(both_sensor == 2)
         [Error  IR_sensor] = ljud_eGet (ljHandle, LJ_ioGET_DIGITAL_BIT, 7, 1, 0);
-        Error_Message(Error)
-        [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_DIGITAL_BIT, 6, 1, 0);
-        Error_Message(Error)
+        Error_Message(Error);
+        [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_AIN, 6, 1, 0);
+        Error_Message(Error);
                 if (IR_sensor > 0)
                     fprintf('Alarm\n')
                     alarm();     
                 end
-                if (IR_OUTSIDE > 0)
-                    lights(1);
-                    l = l + 1;
-                elseif (IR_OUTSIDE < 0)& (l>0)
+                if (IR_OUTSIDE > .7)
+                    lightss(1);
+                    l = (l + 1);
+                elseif (IR_OUTSIDE < .6)& (l>0)
                    l = l - 1;
-                elseif (IR_OUTSIDE < 0)& (1 <=0)
-                    lights(0);
+                elseif (IR_OUTSIDE < .6)& (1 <=0)
+                    lightss(0);
                     fprintf('Lights on\n')
                 end
                 i = 1;
-        elseif (active > 1)&(both_sensor == 1)
+        elseif (active >= 1)&(both_sensor == 1)
         [Error  IR_sensor] = ljud_eGet (ljHandle, LJ_ioGET_DIGITAL_BIT, 7, 1, 0);
         Error_Message(Error)
                 if (IR_sensor > 0)
                     alarm();     
                 end
-        elseif (active > 1)&(both_sensor == 0)    
-        [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_DIGITAL_BIT, 6, 1, 0);
+        elseif (active >= 1)&(both_sensor == 0)    
+        [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_AIN, 6, 1, 0);
         Error_Message(Error)
-                if (IR_OUTSIDE > 0)
-                    lights(1);
-                    l = l + 1;
-                elseif (IR_OUTSIDE < 0)& (l>0)
+                if (IR_OUTSIDE > .7)
+                    lightss(1);
+                    l = (l + 1);
+                elseif (IR_OUTSIDE < .6)& (l>0)
                    l = l - 1;
-                elseif (IR_OUTSIDE < 0)& (1 <=0)
-                    lights(0);
+                elseif (IR_OUTSIDE < .6)& (1 <=0)
+                    lightss(0);
                 end
         end
 end
@@ -203,30 +206,31 @@ Error_Message(Error)
 Error = ljud_ePut(ljHandle, LJ_ioPIN_CONFIGURATION_RESET, 0, 0, 0);
 j=0;
 while j < 10
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,9,1, 1);
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,2,1, 1);
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,0, 4.9, 1);
 Error_Message(Error);
 pause(.5)
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,9,0, 1);
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,2,0, 1);
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,0, 4.9, 1);
 Error_Message(Error);
 j = j + 1;
 end
-
 end
 
 
-function lights(a)
+function lightss(a)
 ljud_LoadDriver
 ljud_Constants 
 % Open the first found LabJack U3
 [Error ljHandle] = ljud_OpenLabJack(LJ_dtU3,LJ_ctUSB,'1',1);
-Error_Message(Error)
+Error_Message(Error);
 Error = ljud_ePut(ljHandle, LJ_ioPIN_CONFIGURATION_RESET, 0, 0, 0);
 if a>0
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,8,0, 1);
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,1, 4.9, 1);
 Error_Message(Error);
 %%%%%%%%Turns on the lights
 else
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,8,0, 0);
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,1, 0, 1);
 Error_Message(Error);
 
 end
