@@ -17,7 +17,7 @@ i = 1;
 l = 1;
 f = 0;
 active = -1;
-active2 = 1
+active2 = 1;
 reset = 0;
 
 fprintf('Welcome to your home security system\n Please enter a password: ')
@@ -160,6 +160,9 @@ while 1 > 0
         if (active == 1)&(both_sensor == 2)
         [Error  IR_sensor] = ljud_eGet (ljHandle, LJ_ioGET_DIGITAL_BIT, 7, 1, 0);
         Error_Message(Error);
+        
+        [Error  rValue] = ljud_eGet (ljHandle, LJ_ioPUT_ANALOG_ENABLE_BIT, 6, 1, 0);
+        button_press = [];
         [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_AIN, 6, 1, 0);
         Error_Message(Error);
                 if (IR_sensor > 0)
@@ -182,15 +185,18 @@ while 1 > 0
                 if (IR_sensor > 0)
                     alarm();     
                 end
-        elseif (active >= 1)&(both_sensor == 0)    
-        [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_AIN, 6, 1, 0);
+        elseif (active >= 1)&(both_sensor == 0)
+        
+        [Error  rValue] = ljud_eGet (ljHandle, LJ_ioPUT_ANALOG_ENABLE_BIT, 6, 1, 0);
+        button_press = [];
+        [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_AIN, 6, 1, 0)
         Error_Message(Error)
                 if (IR_OUTSIDE > .7)
                     lightss(1);
                     l = (l + 1);
                 elseif (IR_OUTSIDE < .6)& (l>0)
                    l = l - 1;
-                elseif (IR_OUTSIDE < .6)& (1 <=0)
+                elseif (l == 0)
                     lightss(0);
                 end
         end
