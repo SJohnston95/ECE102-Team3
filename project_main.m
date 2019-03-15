@@ -162,7 +162,7 @@ while 1 > 0
         Error_Message(Error);
         
         [Error  rValue] = ljud_eGet (ljHandle, LJ_ioPUT_ANALOG_ENABLE_BIT, 6, 1, 0);
-        button_press = [];
+
         [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_AIN, 6, 1, 0);
         Error_Message(Error);
                 if (IR_sensor > 0)
@@ -189,7 +189,7 @@ while 1 > 0
         
         [Error  rValue] = ljud_eGet (ljHandle, LJ_ioPUT_ANALOG_ENABLE_BIT, 6, 1, 0);
         button_press = [];
-        [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_AIN, 6, 1, 0)
+        [Error  IR_OUTSIDE] = ljud_eGet (ljHandle, LJ_ioGET_AIN, 6, 1, 0);
         Error_Message(Error)
                 if (IR_OUTSIDE > .7)
                     lightss(1);
@@ -212,12 +212,12 @@ Error_Message(Error)
 Error = ljud_ePut(ljHandle, LJ_ioPIN_CONFIGURATION_RESET, 0, 0, 0);
 j=0;
 while j < 10
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,2,1, 1);
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,0, 4.9, 1);
+%Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,2,1, 1);       %%%%%%% FIO2 (digital_port 2) is not connected to anything at the moment...
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,1, 2.6, 1);
 Error_Message(Error);
 pause(.5)
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,2,0, 1);
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,0, 4.9, 1);
+%Error = ljud_eGet(ljHandle, LJ_ioPUT_DIGITAL_PORT,2,0, 1);        %%%%%% FIO2 (digital_port 2) is not connected to anything at the moment...
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,1, 2.6, 0);
 Error_Message(Error);
 j = j + 1;
 end
@@ -232,11 +232,11 @@ ljud_Constants
 Error_Message(Error);
 Error = ljud_ePut(ljHandle, LJ_ioPIN_CONFIGURATION_RESET, 0, 0, 0);
 if a>0
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,1, 4.9, 1);
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,0, 4.9, 1);  %%% DAC0 HANDLES WHITE LED LIGHTS
 Error_Message(Error);
 %%%%%%%%Turns on the lights
 else
-Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,1, 0, 1);
+Error = ljud_eGet(ljHandle, LJ_ioPUT_DAC,0, 0, 1);
 Error_Message(Error);
 
 end
