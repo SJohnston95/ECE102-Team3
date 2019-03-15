@@ -1,8 +1,9 @@
 %%%GUI #2- User selects security detection systems to be on
-%Created by Nick Sherbert
+%Created by Nick Sherbert and Stephen Johnston
 %For ECE102 
-%02/26/2019/
+%03/12/2019/
 %LabJack GUI testcode
+
 
 function varargout = GUI_team3codeDisplay(varargin)
 % GUI_TEAM3CODEDISPLAY MATLAB code for GUI_team3codeDisplay.fig
@@ -28,7 +29,7 @@ function varargout = GUI_team3codeDisplay(varargin)
 
 % Edit the above text to modify the response to help GUI_team3codeDisplay
 
-% Last Modified by GUIDE v2.5 10-Mar-2019 14:12:21
+% Last Modified by GUIDE v2.5 15-Mar-2019 13:31:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -83,7 +84,29 @@ function checkbox1_Callback(hObject, eventdata, handles)
 % hObject    handle to checkbox1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-val_checkbox1 = get(handles.checkbox1,'Value');
+val_checkbox1 = get(handles.checkbox1,'Value')
+ljud_LoadDriver
+ljud_Constants
+[Error ljHandle] = ljud_OpenLabJack(LJ_dtU3,LJ_ctUSB,'1',1);
+Error_Message(Error)
+[Error] = ljud_ePut(ljHandle, LJ_ioPIN_CONFIGURATION_RESET, 0, 0, 0);
+Error_Message(Error);
+% Set all pin assignments to the factory default condition
+
+if val_checkbox1 == 1
+for i = 1:3
+      Error = ljud_ePut (ljHandle, LJ_ioPUT_DAC, 1, 2.6, 1); %For optimal sound and lighting use voltage between 2.4 volts and 3.2 volts(Best is 2.6 Volts)
+      Error = ljud_ePut (ljHandle, LJ_ioPUT_DAC, 0, 0, 0);
+      pause(0.5)
+      Error = ljud_ePut (ljHandle, LJ_ioPUT_DAC, 1, 0, 1); %For optimal sound and lighting use voltage between 2.4 volts and 3.2 volts(Best is 2.6 Volts)
+      Error = ljud_ePut (ljHandle, LJ_ioPUT_DAC, 0, 0, 1);
+      pause(0.5)
+end
+elseif val_checkbox1 == 0
+ Error = ljud_ePut (ljHandle, LJ_ioPUT_DAC, 1, 0, 0);  
+end
+
+
 % Hint: get(hObject,'Value') returns toggle state of checkbox1
 
 
@@ -93,17 +116,22 @@ function checkbox2_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA) %%%where 1 for checked and 0 for unchecked.
 val_checkbox2 = get(handles.checkbox2,'Value');
+ljud_LoadDriver
+ljud_Constants
+[Error ljHandle] = ljud_OpenLabJack(LJ_dtU3,LJ_ctUSB,'1',1);
+Error_Message(Error)
+[Error] = ljud_ePut(ljHandle, LJ_ioPIN_CONFIGURATION_RESET, 0, 0, 0);
+Error_Message(Error);
+% Set all pin assignments to the factory default condition
+
+if val_checkbox2 == 1
+      Error = ljud_ePut (ljHandle, LJ_ioPUT_DAC, 1, 0, 0); %keep DAC1 alarm sysyem low and off
+      Error = ljud_ePut (ljHandle, LJ_ioPUT_DAC, 0, 4.9, 1);  %if checked, White LEDs turned on
+elseif val_checkbox2 == 0
+ Error = ljud_ePut (ljHandle, LJ_ioPUT_DAC, 1, 0, 0);  %%keep DAC1 alarm sysyem low and off
+ Error = ljud_ePut (ljHandle, LJ_ioPUT_DAC, 0, 0, 0);  %%if unchecked, White LEDs turned off
+end
 % Hint: get(hObject,'Value') returns toggle state of checkbox2
-
-
-% --- Executes on button press in checkbox3.
-function checkbox3_Callback(hObject, eventdata, handles)
-% hObject    handle to checkbox3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
- %%%where 1 for checked and 0 for unchecked.
-val_checkbox3 = get(handles.checkbox3,'Value');% Hint: get(hObject,'Value') returns toggle state of checkbox3
-
 
 % --- Executes on button press in pushbutton1.
 function pushbutton1_Callback(hObject, eventdata, handles)
